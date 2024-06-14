@@ -5,9 +5,9 @@
 		"inset": 1,
 		"radius": 8,
 		"color": [
-			0.98039216,
-			0.70196080,
-			0.52941179,
+			1.00000000,
+			1.00000000,
+			1.00000000,
 			1.00000000
 		],
 		"chroma": {
@@ -19,19 +19,15 @@
 	"bar": {
 		"enabled": true,
 		"height": 32,
-		"margin": {
-			"x": 0,
-			"y": 0
-		},
 		"border": {
 			"enabled": true,
 			"width": 2,
 			"inset": 0,
 			"radius": 5,
 			"color": [
-				0.98039216,
-				0.70196080,
-				0.52941179,
+				1.00000000,
+				1.00000000,
+				1.00000000,
 				1.00000000
 			],
 			"chroma": {
@@ -40,7 +36,11 @@
 				"fps": 10
 			}
 		},
-		"text_padding": 0,
+		"text_padding": 10,
+		"margin": {
+			"x": 12,
+			"y": 12
+		},
 		"font_size": 0,
 		"text_shadow": false,
 		"background_color": [
@@ -99,14 +99,14 @@
 				0.95686275,
 				1.00000000
 			],
-			"format_string": "%v-%v-%v %v:%v:%v"
+			"format_string": "%4d-%v-%2d %2d:%2d:%2d"
 		},
 		"battery": {
 			"enabled": true,
 			"color": [
-				0.80392158,
-				0.83921570,
-				0.95686275,
+				0.46900001,
+				0.70300001,
+				0.99199998,
 				1.00000000
 			],
 			"charging_color": [
@@ -123,10 +123,35 @@
 			]
 		}
 	},
-	"padding": 24,
+	"padding": {
+		"left": 12,
+		"top": 12,
+		"right": 12,
+		"bottom": 12
+	},
 	"gap": 12,
 	"default_layout": 4,
 	"window_rules": [
-
+		{
+			"titles": [
+				"Steam", "Discord"
+			],
+			"behaviour": "Tiling",
+			"border": {}
+		},
+		{
+			"titles": [
+				"RenderDoc.*"
+			],
+			"behaviour": "Floating",
+			"remove_title_bar": true,
+			"border": {}
+		},
+		{
+			"titles": [
+				"DOOMEternal"
+			],
+			"behaviour": "Ignore"
+		}
 	]
 }
