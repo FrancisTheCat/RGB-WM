@@ -489,8 +489,9 @@ parse_key_combination :: proc(str: string) -> (input: Input, ok: bool) {
 }
 
 parse_action :: proc(str: string) -> (action: Action, ok: bool) {
-	str := strings.to_lower(strings.trim_space(str), context.temp_allocator)
-	if action, ok = ACTION_STRINGS[str]; ok {
+	str := strings.trim_space(str)
+	lower := strings.to_lower(str, context.temp_allocator)
+	if action, ok = ACTION_STRINGS[lower]; ok {
 		return
 	}
 
@@ -499,7 +500,7 @@ parse_action :: proc(str: string) -> (action: Action, ok: bool) {
 			if len(str) < len(match) {
 				continue
 			}
-			if str[:len(match) - 1] != match[:len(match) - 1] {
+			if lower[:len(match) - 1] != match[:len(match) - 1] {
 				continue
 			}
 			args := strings.split(str[len(match) - 1:], " ")

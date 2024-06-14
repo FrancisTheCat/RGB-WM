@@ -37,7 +37,7 @@ alt + shift + 8 : Move Workspace 7
 alt + shift + 9 : Move Workspace 8
 alt + shift + 0 : Move Workspace 9
 
-alt + return : Launch "cmd.exe" "/"
+alt + return : Launch "cmd.exe" "C:/Dev"
 
 alt + v         : Set Layout Vertical
 alt + shift + v : Set Layout Horizontal
