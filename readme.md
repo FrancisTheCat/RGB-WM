@@ -30,6 +30,6 @@ NOTE: Some options may require a restart, this will be fixed at some point
 
 # Alternatives
 These are some fantastic window managers for windows that serve as inspirations, learning materials and alternatives to this one, go check them out they are all quite nice (none of them have RGB tho)
-- GlazeWM
-- Komorebi
-- dwm-win32
+- [GlazeWM](https://github.com/glzr-io/glazewm)
+- [Komorebi](https://github.com/LGUG2Z/komorebi)
+- [dwm-win32](https://github.com/prabirshrestha/dwm-win32)
