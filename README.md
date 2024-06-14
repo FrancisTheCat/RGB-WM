@@ -6,6 +6,8 @@ RGB WM is a dynamic tiling window manager for Windows 11 that does not sacrifice
 
 ![image](screenshot.png)
 
+Floating windows can be dragged when holding alt and pressing LMB, resized with RMB or centered with MMB.
+
 ## Installation
 
 ### Prebuilt binaries
