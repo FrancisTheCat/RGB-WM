@@ -1,4 +1,5 @@
 Warning: This is a small and young toy project, it might eat your windows
+
 Warning: At the moment multi monitor setups are _not_ supported
 # RGB WM
 RGB WM is a dynamic tiling window manager for Windows 11 that does not sacrifice on its RGB
