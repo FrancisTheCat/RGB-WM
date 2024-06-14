@@ -1,0 +1,6 @@
+*.exe
+*.pdb
+ols.json
+log.txt
+config.json
+keybinds.txt

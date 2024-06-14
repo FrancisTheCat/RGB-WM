@@ -1,0 +1,53 @@
+alt + e         : Quit
+alt + shift + r : Reload Config
+alt + r         : Retile
+alt + shift + d : Print Debug Info
+
+alt + q : Close Window
+
+alt + h : Focus Left
+alt + j : Focus Down
+alt + k : Focus Up
+alt + l : Focus Right
+
+alt + shift + h : Move Left
+alt + shift + j : Move Down
+alt + shift + k : Move Up
+alt + shift + l : Move Right
+
+alt + 1 : Focus Workspace 0
+alt + 2 : Focus Workspace 1
+alt + 3 : Focus Workspace 2
+alt + 4 : Focus Workspace 3
+alt + 5 : Focus Workspace 4
+alt + 6 : Focus Workspace 5
+alt + 7 : Focus Workspace 6
+alt + 8 : Focus Workspace 7
+alt + 9 : Focus Workspace 8
+alt + 0 : Focus Workspace 9
+
+alt + shift + 1 : Move Workspace 0
+alt + shift + 2 : Move Workspace 1
+alt + shift + 3 : Move Workspace 2
+alt + shift + 4 : Move Workspace 3
+alt + shift + 5 : Move Workspace 4
+alt + shift + 6 : Move Workspace 5
+alt + shift + 7 : Move Workspace 6
+alt + shift + 8 : Move Workspace 7
+alt + shift + 9 : Move Workspace 8
+alt + shift + 0 : Move Workspace 9
+
+alt + return : Launch "powershell" "C:/Dev"
+
+alt + v         : Set Layout Vertical
+alt + shift + v : Set Layout Horizontal
+alt + s         : Set Layout Stack
+alt + d         : Set Layout Dwindle
+
+alt + shift + f : Flip Vertical
+alt + f         : Flip Horizontal
+
+alt + shift + y : Toggle Floating
+alt + y         : Toggle Focus
+
+alt + b : Remove Titlebar
