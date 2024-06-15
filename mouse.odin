@@ -4,6 +4,8 @@ import win32 "core:sys/windows"
 
 @(private = "file")
 window_drag_offset: [2]i32
+@(private = "file")
+dragged_window_hwnd: win32.HWND
 dragged_window: int
 
 dragging: bool
@@ -24,8 +26,11 @@ get_window_under_cursor :: proc "contextless" (pt: win32.POINT) -> int {
 
 end_window_drag :: proc "contextless" () {
 	if len(workspaces[focused_workspace].floating_windows) > dragged_window {
-		window := &workspaces[focused_workspace].floating_windows[dragged_window]
-		window.rect = get_window_rect(window.hwnd)
+		if workspaces[focused_workspace].floating_windows[dragged_window].hwnd ==
+		   dragged_window_hwnd {
+			window := &workspaces[focused_workspace].floating_windows[dragged_window]
+			window.rect = get_window_rect(window.hwnd)
+		}
 	}
 	workspaces[focused_workspace].dirty = true
 	dragging = false
@@ -33,8 +38,11 @@ end_window_drag :: proc "contextless" () {
 
 end_window_resize :: proc "contextless" () {
 	if len(workspaces[focused_workspace].floating_windows) > dragged_window {
-		window := &workspaces[focused_workspace].floating_windows[dragged_window]
-		window.rect = get_window_rect(window.hwnd)
+		if workspaces[focused_workspace].floating_windows[dragged_window].hwnd ==
+		   dragged_window_hwnd {
+			window := &workspaces[focused_workspace].floating_windows[dragged_window]
+			window.rect = get_window_rect(window.hwnd)
+		}
 	}
 	workspaces[focused_workspace].dirty = true
 	sizing = false
@@ -46,10 +54,6 @@ mouse_hook_proc :: proc "system" (
 	l_param: win32.LPARAM,
 ) -> win32.LRESULT {
 	if n_code != 0 {
-		return win32.CallNextHookEx(nil, n_code, w_param, l_param)
-	}
-
-	if len(workspaces[focused_workspace].floating_windows) <= dragged_window {
 		return win32.CallNextHookEx(nil, n_code, w_param, l_param)
 	}
 
@@ -85,6 +89,7 @@ mouse_hook_proc :: proc "system" (
 			window := workspaces[focused_workspace].floating_windows[window_index]
 			dragging = true
 			dragged_window = window_index
+			dragged_window_hwnd = window.hwnd
 			window_drag_offset = {window.rect.left, window.rect.top} - transmute([2]i32)input.pt
 
 			return -1
@@ -105,8 +110,10 @@ mouse_hook_proc :: proc "system" (
 				index    = window_index,
 				floating = true,
 			}
+			window := workspaces[focused_workspace].floating_windows[window_index]
 			sizing = true
 			dragged_window = window_index
+			dragged_window_hwnd = window.hwnd
 			window_drag_offset = transmute([2]i32)input.pt
 
 			return -1
@@ -117,6 +124,11 @@ mouse_hook_proc :: proc "system" (
 			return -1
 		}
 	case win32.WM_MOUSEMOVE:
+		if w := get_focused_window(workspaces[focused_workspace]);
+		   w == nil || w.hwnd != dragged_window_hwnd {
+			return win32.CallNextHookEx(nil, n_code, w_param, l_param)
+		}
+
 		if dragging {
 			win32.SetCursorPos(input.pt.x, input.pt.y)
 
