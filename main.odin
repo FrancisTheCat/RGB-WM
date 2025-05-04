@@ -38,6 +38,8 @@ Window_Message :: struct {
 
 message_queue := make([dynamic]Window_Message)
 
+screen_width, screen_height: i32
+
 Layout :: enum {
 	Vertical,
 	Horizontal,
@@ -124,7 +126,7 @@ allocators_init :: proc() {
 
 main :: proc() {
 	win32.SetUnhandledExceptionFilter(unhandled_exception_filter)
-	win32.SetConsoleOutputCP(win32.CP_UTF8)
+	win32.SetConsoleOutputCP(.UTF8)
 
 	allocators_init()
 
@@ -656,9 +658,9 @@ handle_inputs :: proc(workspaces: []Workspace, selected_workspace: ^int) -> (sho
 			result := win32.ShellExecuteW(
 				nil,
 				nil,
-				win32.utf8_to_wstring(v.path),
+				win32.utf8_to_wstring(string(v)),
 				nil,
-				win32.utf8_to_wstring(v.dir),
+				nil,
 				win32.SW_SHOWNORMAL,
 			)
 			if uintptr(result) > 32 {
@@ -839,7 +841,6 @@ handle_window_message :: proc(
 	}
 }
 
-// TODO(Franz): filter out messages from other workspaces
 handle_window_messages :: proc(workspace: ^Workspace) {
 	msg_loop: for {
 		msg := pop_safe(&message_queue) or_break
@@ -856,11 +857,101 @@ handle_window_messages :: proc(workspace: ^Workspace) {
 			}
 		}
 
+		if handle_background_window_event(msg) {
+			// uhh idk
+			break
+		}
+
 		#partial switch msg.event {
 		case .Show, .Uncloaked, .MinimizeEnd:
 			manage_window(msg.hwnd, true)
 		}
 	}
+}
+
+handle_background_window_event :: proc(msg: Window_Message) -> (handled: bool) {
+	for &workspace, workspace_i in workspaces {
+		if workspace_i == focused_workspace do continue
+
+		for &window, window_i in workspace.windows {
+			if window.hwnd == msg.hwnd {
+				#partial switch msg.event {
+				case .Show, .Uncloaked, .MinimizeEnd:
+					new_workspace := workspace_i
+					if new_workspace != focused_workspace {
+						hide_workspace(workspaces[focused_workspace])
+						show_workspace(workspaces[new_workspace])
+						focused_workspace = new_workspace
+						update_bar_state()
+					}
+					workspace.focused_window = {
+						index    = window_i,
+						floating = false,
+					}
+					append(&message_queue, msg)
+					return true
+				case .MoveSizeEnd:
+					workspace.dirty = true
+					return true
+				case .Destroy, .Cloaked, .MinimizeStart:
+					delete(window.class, window_text_allocator)
+					delete(window.title, window_text_allocator)
+					ordered_remove(&workspace.windows, window_i)
+					if workspace.focused_window.index == len(workspace.windows) &&
+					   len(workspace.windows) != 0 {
+						workspace.focused_window.index -= 1
+					}
+					update_bar_state()
+					workspace.dirty = true
+					return true
+				}
+			}
+		}
+		for &window, window_i in workspace.floating_windows {
+			if window.hwnd == msg.hwnd {
+				#partial switch msg.event {
+				case .Show, .Uncloaked, .MinimizeEnd:
+					new_workspace := workspace_i
+					if new_workspace != focused_workspace {
+						hide_workspace(workspaces[focused_workspace])
+						show_workspace(workspaces[new_workspace])
+						focused_workspace = new_workspace
+						update_bar_state()
+					}
+					workspace.focused_window = {
+						index    = window_i,
+						floating = true,
+					}
+					append(&message_queue, msg)
+					return true
+				case .MoveSizeEnd:
+					workspace.dirty = true
+					return true
+				case .Destroy, .Cloaked, .MinimizeStart:
+					delete(window.class, window_text_allocator)
+					delete(window.title, window_text_allocator)
+					ordered_remove(&workspace.floating_windows, window_i)
+					if workspace.focused_window.index == len(workspace.floating_windows) &&
+					   len(workspace.floating_windows) != 0 {
+						workspace.focused_window.index -= 1
+					}
+					if workspace.focused_window == {index = dragged_window, floating = true} {
+						if sizing {
+							end_window_resize()
+						}
+						if dragging {
+							end_window_drag()
+						}
+					}
+					update_bar_state()
+					workspace.dirty = true
+					return true
+				}
+			}
+		}
+	}
+
+	return
 }
 
 hide_workspace :: proc(workspace: Workspace) {
@@ -1059,6 +1150,9 @@ manage_window :: proc(hwnd: win32.HWND, focus: bool = false) {
 	set_window_border_delta(&window)
 	if b_ := apply_window_rules(&window); b_ != nil {
 		b = b_
+	}
+	if (window.title == "Discord Overlay Input Trap") {
+		b = .Ignore
 	}
 	#partial switch b {
 	case .Tiling:

@@ -1,3 +1,4 @@
+#+feature dynamic-literals
 package wm
 
 import "core:log"
@@ -245,7 +246,7 @@ reload_keybinds :: proc() {
 	keybinds_, ok = parse_keybind_list(string(file), keybind_allocators.x)
 	if ok {
 		keybinds = keybinds_[:]
-		log.info("loaded keybinds")
+		log.info("reloaded keybinds")
 		keybind_allocators.xy = keybind_allocators.yx
 		free_all(keybind_allocators.x)
 	} else {
@@ -349,9 +350,7 @@ Action_Toggle_Layout :: struct {
 
 Action_Set_Layout :: distinct Layout
 
-Action_Start_Process :: struct {
-	path, dir, args: string,
-}
+Action_Start_Process :: distinct string
 
 Action_Set_Behaviour :: struct {
 	behaviour: Window_Behaviour,
@@ -518,23 +517,12 @@ parse_action :: proc(str: string) -> (action: Action, ok: bool) {
 
 			t := reflect.type_info_base(type_info_of(a.id))
 			#partial switch t in t.variant {
-			case reflect.Type_Info_Struct:
-				if len(args) > len(t.names) {
-					return
+			case reflect.Type_Info_String:
+				str, allocated := strconv.unquote_string(args[0]) or_return
+				if !allocated {
+					str = strings.clone(str)
 				}
-				for arg, i in args {
-					#partial switch _ in t.types[i].variant {
-					case reflect.Type_Info_String:
-						str, allocated := strconv.unquote_string(arg) or_return
-						if !allocated {
-							str = strings.clone(str)
-						}
-						(^string)(uintptr(a.data) + t.offsets[i])^ = str
-					case:
-						return
-					}
-				}
-
+				(^string)(a.data)^ = str
 				ok = true
 				return
 			case reflect.Type_Info_Integer:

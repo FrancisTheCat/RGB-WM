@@ -30,7 +30,7 @@ create_bar_window :: proc() {
 		glfw.WindowHint(glfw.TRANSPARENT_FRAMEBUFFER, true)
 		glfw.WindowHint(glfw.DECORATED, false)
 		bar_window_handle = glfw.CreateWindow(
-			1920 - config.bar.margin.x * 2,
+			monitor_resolution.x - config.bar.margin.x * 2,
 			config.bar.height,
 			"Bar Window",
 			nil,
@@ -340,6 +340,6 @@ update_bar_state :: proc() {
 
 update_bar_position :: proc() {
 	glfw.SetWindowPos(bar_window_handle, expand_values(config.bar.margin))
-	glfw.SetWindowSize(bar_window_handle, 1920 - config.bar.margin.x * 2, config.bar.height)
+	glfw.SetWindowSize(bar_window_handle, screen_width - config.bar.margin.x * 2, config.bar.height)
 }
 

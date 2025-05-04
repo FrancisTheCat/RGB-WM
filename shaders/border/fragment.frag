@@ -15,6 +15,7 @@ uniform vec2  chroma_offset;
 
 uniform float aspect;
 uniform vec2  resolution;
+uniform vec2  screen_resolution;
 
 uniform bool border;
 
@@ -25,7 +26,7 @@ float box(vec2 position, vec2 halfSize, float cornerRadius) {
 
 vec4 get_border_color() {
     vec2 tex_coords = vec2(1, -1) * v_position * 0.5 + 0.5;
-    vec2 position = (tex_coords * resolution + chroma_offset) / vec2(1920, 1080);
+    vec2 position   = (tex_coords * resolution + chroma_offset) / screen_resolution;
     if (chroma) {
         return vec4(
             sqrt(vec3(

@@ -306,8 +306,7 @@ render_string_drawcalls :: proc "contextless" (
 
 	clear(vertex_buffer)
 
-	// TODO(Franz): make this better
-	window_dimensions: glm.vec2 = {f32(1920 - 2 * config.bar.margin.x), cast(f32)config.bar.height}
+	window_dimensions: glm.vec2 = {f32(monitor_resolution.x - 2 * config.bar.margin.x), cast(f32)config.bar.height}
 
 	font := fonts[font_size]
 

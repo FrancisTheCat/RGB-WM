@@ -44,6 +44,7 @@ create_window_border :: proc(id: int) -> Window_Border {
 					f32(window_height),
 			)
 			gl.Uniform2f(get_uniform(.Ui, "resolution"), f32(window_width), f32(window_height))
+			gl.Uniform2f(get_uniform(.Ui, "screen_resolution"), f32(monitor_resolution.x), f32(monitor_resolution.y))
 			if config.border.chroma.enabled {
 				gl.Uniform1f(
 					get_uniform(.Ui, "chroma_time"),
